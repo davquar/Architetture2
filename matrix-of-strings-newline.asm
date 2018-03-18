@@ -12,7 +12,7 @@ printText: .asciiz "Your matrix is:\n"
 rows: .word 0
 cols: .word 0
 matrix: .word 0:100
-addr: .word 1
+addr: .byte 0
 
 .text
 
@@ -62,23 +62,14 @@ askColLoop:
 	mul $a0, $s1, $t0			# col*i
 	add $a0, $a0, $t1			# col*i + j
 	sll $a0, $a0, 8				# (col*i + j)*255
-	la $a0, matrix($a0)			# 
-	sw $a0, addr
+	move $t3, $a0
+	la $a0, matrix($a0)			# matrix + (col*i + j)*4
 	
+	# here we should strip the \n character...
+	 
 	li $a1, 20					# set max number of character to read
 	li $v0, 8					# load "read string" service
 	syscall
-		
-	# STRIP \N CHARACTER
-	li $t4, 0					# initialize a counter register
-	removeN:
-		lb $s3, addr($t4)			# load 1st character
-		addi $t4, $t4, 1
-		bnez $s3, removeN
-		beq $t4, $a1, afterRemoveN
-		subiu $t4, $t4, 2
-		sb $t4 , addr($t4)
-	afterRemoveN:
 	
 	# GO ON
 	addi $t1, $t1, 1			# i++
