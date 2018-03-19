@@ -6,13 +6,14 @@
 rowsPrompt: .asciiz "How many rows? "
 colsPrompt: .asciiz "How many columns? "
 nextPrompt: .asciiz "Next string: "
+newLine: .asciiz "\n"
+tab: .asciiz "\t"
 
 printText: .asciiz "Your matrix is:\n"
 
 rows: .word 0
 cols: .word 0
 matrix: .word 0:100
-addr: .word 1
 
 .text
 
@@ -63,7 +64,6 @@ askColLoop:
 	add $a0, $a0, $t1			# col*i + j
 	sll $a0, $a0, 8				# (col*i + j)*255
 	la $a0, matrix($a0)			# 
-	sw $a0, addr
 	
 	li $a1, 20					# set max number of character to read
 	li $v0, 8					# load "read string" service
@@ -71,13 +71,14 @@ askColLoop:
 		
 	# STRIP \N CHARACTER
 	li $t4, 0					# initialize a counter register
+	add $t4, $t4, $a0
 	removeN:
-		lb $s3, addr($t4)			# load 1st character
+		lb $s3, ($t4)			# load 1st character
 		addi $t4, $t4, 1
 		bnez $s3, removeN
 		beq $t4, $a1, afterRemoveN
 		subiu $t4, $t4, 2
-		sb $t4 , addr($t4)
+		sb $0, ($t4)
 	afterRemoveN:
 	
 	# GO ON
@@ -118,11 +119,21 @@ printColLoop:
 	li $v0, 4					# load "print string" service
 	syscall
 	
+	# PRINT \t
+	la $a0, tab
+	li $v0, 4
+	syscall
+	
 	# GO ON
 	addi $t1, $t1, 1			# i++
 	j printColLoop
 	
 printColEnd:
+	# PRINT \N
+	la $a0, newLine
+	li $v0, 4
+	syscall
+	
 	# PREPARE FOR NEXT ROW
 	addi $t0, $t0, 1			# increment row index
 	li $t1, 0					# reset column index
