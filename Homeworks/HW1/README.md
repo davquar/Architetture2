@@ -25,18 +25,18 @@ A MIPS assembly program that:
 
 1. Reads `0 < k < 21`;
 2. Reads `S`:
-    2.1. Each item must be in one line;
-    2.2. `0` is the sequence termination integer;
-    2.3. Print out the next item of `Y` when you have sufficient data.
+  2.1. Each item must be in one line;
+  2.2. `0` is the sequence termination integer;
+  2.3. Print out the next item of `Y` when you have sufficient data.
 3. Print some stats:
-    3.1. `min(S)`;
-    3.2. `max(S)`;
-    3.3. `min(Y)`;
-    3.4. `max(Y)`.
+  3.1. `min(S)`;
+  3.2. `max(S)`;
+  3.3. `min(Y)`;
+  3.4. `max(Y)`.
 
 ## Submitting requirements
 
-The program should be written in `programma.asm`, and:
+The program should be written in `exercise01.asm`, and:
 
 - Must:
   - Start its execution from the `main:` label;
@@ -47,9 +47,9 @@ The program should be written in `programma.asm`, and:
 
 ## Testing
 
-We have two file `input.txt` and `expected.txt`.
-Execute `java -jar Mars4_5.jar me nc sm ic programma.asm < input.txt > output.txt`.
-Then do `diff` of `output.txt` and `expected.txt`.
+Each test set is made of an *input* and an *expected* file.
+Execute `java -jar Mars4_5.jar me nc sm ic exercise01.asm < input.txt > output.txt`.
+Then do `diff output.txt expected.txt`.
 
 ## Execution example
 
