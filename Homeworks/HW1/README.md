@@ -113,7 +113,18 @@ We can maintain a counter to compute the window and to sum its items.
 When we reach a window size of `k` we can print the sum and increment the counter.
 Along these operations we can store the stats in some registers.
 
-We can easily optimize it, because we don't need any vector. We just need to take an integer at a time, do some comparison and math, and update some registers.
+A bit more specifically, we need:
+
+- An array called `window` of size `k`;
+- 5 registers to store sum and statistics;
+- 2 registers to handle the edge cases of:
+  - 1st sequence number;
+  - 1st statistic.
+
+We don't need to loop through `window` each time we need a sum, because we can maintain it by:
+
+- adding the current integer to the sum;
+- removing the first integer of the `window` when needed.
 
 ### High-Level Implementation
 
@@ -145,11 +156,11 @@ We can easily optimize it, because we don't need any vector. We just need to tak
             if (isFirstOfSequence) {
                 minS = currentInt;
                 maxS = currentInt;
+                isFirstOfSequence = false;
             } else {
                 if (currentInt < minS)  minS = currentInt;
                 else if (currentInt > maxS) maxS = currentInt;
             }
-            isFirstOfSequence = false;
 
             sum += currentInt;
 
@@ -186,7 +197,14 @@ We can easily optimize it, because we don't need any vector. We just need to tak
         for (int i=0; i<s.length-1; i++) {
             if (s[i + 1] != 0)
                 s[i] = s[i + 1];
-            // else no need to shift, because all the remaining integers would be 0.
+            else
+                return // no need to shift, because all the remaining integers would be 0.
         }
     }
 ```
+
+## Final notes
+
+The program is in the file `exercise01.asm`.
+Due to the submitting requirements, there are no prompts or help strings; but the Java implementation and the ASM comments would compensate pretty good.
+Have fun :)
