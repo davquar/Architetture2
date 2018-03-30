@@ -124,22 +124,22 @@ endSequenceLoop:
 
 # shift 1 place to left, all the items in the window
 shiftWindow:
-	move $t6, $0							# counter i
-	addi $s3, $k, -1						# $s3 = k-1
+	move $t6, $0						# counter i
+	addi $s3, $k, -1					# $s3 = k-1
 	loop:
-		bge $t6, $s3, endLoop				# if i>k-1, end this loop; else...
-		addi $t6, $t6, 1					# i++ (we need the next item)
-		sll $t6, $t6, 2						# i*=4
-		lw $t7, window($t6)					# load item from window
+		bge $t6, $s3, endLoop			# if i>k-1, end this loop; else...
+		addi $t6, $t6, 1				# i++ (we need the next item)
+		sll $t6, $t6, 2					# i*=4
+		lw $t7, window($t6)				# load item from window
 		
-		beqz $t7, endLoop					# if window[i+1] == 0, end this loop (becaouse all the rest is 0); else...
-			srl $t6, $t6, 2					# i /= 4
-			addi $t6, $t6, -1				# i--
-			sll $t6, $t6, 2					# i *= 4
-			sw $t7, window($t6)				# window[i] = window[i+1]
-			srl $t6, $t6, 2					# i /= 4
+		beqz $t7, endLoop				# if window[i+1] == 0, end this loop (becaouse all the rest is 0); else...
+			srl $t6, $t6, 2				# i /= 4
+			addi $t6, $t6, -1			# i--
+			sll $t6, $t6, 2				# i *= 4
+			sw $t7, window($t6)			# window[i] = window[i+1]
+			srl $t6, $t6, 2				# i /= 4
 					
-		addi $t6, $t6, 1					# i++
+		addi $t6, $t6, 1				# i++
 		j loop
 		
 	endLoop:
