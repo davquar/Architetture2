@@ -11,13 +11,13 @@ Our tree is implemented as a vector, where the first half contains the intermedi
 The tree has these requirements:
 
 - The 1st node is the length-1 of the array;
-- The **root **is at index `1`;
+- The **root** is at index `1`;
 - For each node at position `i`:
   - The left child is at index `2i`;
   - The right child is at index `2i+1`.
-- Every **null **node contains `-666`;
-- **Operations **are encoded in **intermediate nodes** as this:
-  - *****: `-1`;
+- Every **null** node contains `-666`;
+- **Operations** are encoded in **intermediate nodes** as this:
+  - **\***: `-1`;
   - **+**: `-2`;
   - **-**:  `-3`;
   - **^**: `-4`;
@@ -25,7 +25,7 @@ The tree has these requirements:
 
 It is worth to note that if the height is `h`, the leaves at level `i < h` have **two empty children**.
 
-So, a node is a **leave **if:
+So, a node is a **leave** if:
 
 - Its children don't exist;
 - Its children have value `-666`.
