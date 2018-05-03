@@ -1,2 +1,5 @@
-
+.idea
+CMakeFiles
+CMakeLists.txt
+cmake-build-debug
 MARS.jar
