@@ -87,7 +87,7 @@ A simple tree traversal should do the trick:
 
 ## Function 2: resolve a step and modify the tree
 
-Given the vector's address, it should simplify the expression, following these rules:
+Given the vector's address, it should resolve **one step** of the expression, following these rules:
 
 - Replace the operators that have numeric children, with the result of that operation;
 - Mark the evaluated children with `-666`.
@@ -110,11 +110,12 @@ n n  n  n   n n  n  n
 
 Maybe a modified traversal:
 
-1. Traverse the tree;
-2. If we get to a leave:
+1. For each node that is not a leaf, traverse into it;
+2. If both children are leaves:
    1. Compute the operation;
    2. Write the result to the parent;
-   3. Set the leave and its brother to `-666`.
+   3. Set the leaves to `-666`;
+   4. Return.
 
 ---
 
@@ -122,8 +123,8 @@ Maybe a modified traversal:
 
 Write a MIPS program that:
 
-- Defined the two recursive functions;
-- Define the `main` procedure, that:
+- Defines the two recursive functions;
+- Defines the `main` procedure, that:
   1. Reads the number of items `N`; 
   2. Stores it in `vector[0]`;
   3. Reads the next `N` items and stores them in the vector;
