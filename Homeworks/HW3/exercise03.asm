@@ -10,6 +10,7 @@
 	addChar: .asciiz "+"
 	subChar: .asciiz "-"
 	powChar: .asciiz "^"
+	emptyChar: .asciiz " "
 .text
 
 .eqv $n, $t0
@@ -62,9 +63,25 @@
 
 .macro printOperation (%index)
 	readVector (%index, $a0)
+	beq $a0, $MUL, isMul
 	beq $a0, $ADD, isAdd
+	beq $a0, $SUB, isSub
+	beq $a0, $POW, isPow
+	la $a0, emptyChar
+	j print
 	isAdd:
 		la $a0, addChar
+		j print
+	isMul:
+		la $a0, mulChar
+		j print
+	isSub:
+		la $a0, subChar
+		j print
+	isPow:
+		la $a0, powChar
+		j print
+	print:
 	li $v0, 4
 	syscall
 .end_macro
@@ -97,9 +114,9 @@ main:
 # a0: vector's address
 # a1: current index in vector
 printExpression:
-	addi $sp, $sp, -8				# reserve a two-word stack space
-	sw $ra, 0($sp)					# save current $ra in stack
-	sw $index, 4($sp)					# save current index in stack
+	addi $sp, $sp, -8
+	sw $ra, 0($sp)
+	sw $index, 4($sp)
 	
 	# print open bracket
 	la $a0, openBracket
@@ -112,9 +129,6 @@ printExpression:
 		readVector ($index, $a0)		# vector(4*$a1) --> $a0
 		li $v0, 1
 		syscall
-		la $a0, closedBracket
-		li $v0, 4
-		syscall
 		j return
 	
 	notLeaf:
@@ -124,13 +138,19 @@ printExpression:
 		move $index, $left
 		jal printExpression
 		
+		lw $index, 4($sp)
 		printOperation ($index)
 
-		move $index, $right
+		mul $index, $index, 2
+		addi $index, $index, 1
 		jal printExpression
-			
+		
 	return:
-	addi $sp, $sp, 8			# free the two-word stack space
-	lw $ra, 0($sp)				# restore current $ra from stack
-	lw $index, 4($sp)			# restore index from stack
-	jr $ra						# resume where you left
+		la $a0, closedBracket
+		li $v0, 4
+		syscall
+
+		lw $ra, 0($sp)
+		lw $index, 4($sp)
+		addi $sp, $sp, 8
+		jr $ra
