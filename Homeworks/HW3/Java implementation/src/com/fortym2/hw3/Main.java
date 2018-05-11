@@ -13,30 +13,24 @@ public class Main {
 
     static int n;
     static int[] v;
-    static boolean[] visited;
 
     public static void main(String[] args) {
         n = 15;
         v = new int[] {15,-1,-2,-3,3,-1,7,-3,-666,-666,5,8,-666,-666,6,9};
-        visited = new boolean[n+1];
 
         printExpression(1);
         System.out.println();
-        visited = new boolean[n+1];
 
         while (!(v[2] == EMPTY && v[3] == EMPTY)) {
             nextStep(1);
-            visited = new boolean[n + 1];
             printExpression(1);
             System.out.println();
-            visited = new boolean[n + 1];
         }
 
         System.out.println();
     }
 
     static void printExpression(int index) {
-        visited[index] = true;
         System.out.print(OPEN_BRACKET);
         if (isLeaf(index)) {
             System.out.print(v[index] + CLOSE_BRACKET);
@@ -46,22 +40,14 @@ public class Main {
         int left = getLeftChildIndex(index);
         int right = getRightChildIndex(index);
 
-        if (left <= n) {
-            if (!visited[left]) printExpression(left);
-        }
-        if (right <= n) {
-            if (!visited[right]) {
-                printOperation(index);
-                printExpression(right);
-            }
-        }
+        printExpression(left);
+        printOperation(index);
+        printExpression(right);
 
         System.out.print(CLOSE_BRACKET);
     }
 
     static void nextStep(int index) {
-        visited[index] = true;
-
         int left = getLeftChildIndex(index);
         int right = getRightChildIndex(index);
 
@@ -72,12 +58,8 @@ public class Main {
             }
         }
 
-        if (left <= n) {
-            if (!visited[left]) nextStep(left);
-        }
-        if (right <= n) {
-            if (!visited[right]) nextStep(right);
-        }
+        if (left <= n) nextStep(left);
+        if (right <= n) nextStep(right);
     }
 
     static int getLeftChildIndex(int index) {
