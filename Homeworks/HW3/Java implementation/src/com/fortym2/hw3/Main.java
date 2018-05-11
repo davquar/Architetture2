@@ -58,8 +58,8 @@ public class Main {
             }
         }
 
-        if (left <= n) nextStep(left);
-        if (right <= n) nextStep(right);
+        if (!isLeaf(left)) nextStep(left);
+        if (!isLeaf(right)) nextStep(right);
     }
 
     static int getLeftChildIndex(int index) {
