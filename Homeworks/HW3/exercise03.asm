@@ -115,10 +115,11 @@ main:
 	addi $index, $0, 1
 	jal printExpression
 
-	li $s0, 0
-	simplifyLoop:
-		beq $s0, 5, end
-		addi $index, $0, 1
+	resolveStepLoop:
+		lw $s0, vector+8
+		lw $s1, vector+12
+		beq $s0, $EMPTY, end
+		beq $s1, $EMPTY, end
 		jal nextStep
 	
 		la $a0, newLine
@@ -126,8 +127,7 @@ main:
 		syscall
 	
 		jal printExpression
-		addi $s0, $s0, 1
-		j simplifyLoop
+		j resolveStepLoop
 	
 	end:
 	li $v0, 10
@@ -186,6 +186,9 @@ nextStep:
 	sw $ra, 0($sp)
 	sw $index, 4($sp)
 	
+	isLeaf ($index)
+	beq $v0, 1, returnDo
+	
 	mul $left, $index, 2
 	addi $right, $left, 1
 	
@@ -231,20 +234,17 @@ nextStep:
 	# end operation
 	
 	skipOperation:
-	
-	isLeaf ($left)
-	beq $v0, 1, tryRight
+
 	move $index, $left
 	jal nextStep
-	
+		
 	lw $index, 4($sp)
+	mul $right, $index, 2
+	addi $right, $right, 1
 	
-	tryRight:
-		isLeaf ($right)
-		beq $v0, 1, returnDo
-		move $index, $right
-		jal nextStep
-	
+	move $index, $right
+	jal nextStep
+		
 	returnDo:
 	lw $ra, 0($sp)
 	lw $index, 4($sp)
