@@ -111,16 +111,25 @@ main:
 #		addiu $t1, $t1, 1
 #		j askLoop
 #	endAskLoop:
+
 	addi $index, $0, 1
 	jal printExpression
-	jal nextStep
+
+	li $s0, 0
+	simplifyLoop:
+		beq $s0, 5, end
+		addi $index, $0, 1
+		jal nextStep
 	
-	la $a0, newLine
-	li $v0, 4
-	syscall
+		la $a0, newLine
+		li $v0, 4
+		syscall
 	
-	jal printExpression
+		jal printExpression
+		addi $s0, $s0, 1
+		j simplifyLoop
 	
+	end:
 	li $v0, 10
 	syscall
 
@@ -193,6 +202,8 @@ nextStep:
 	
 	# do operation
 	readVector ($index, $opNode)
+	readVector ($left, $leftValue)
+	readVector ($right, $rightValue)
 	beq $opNode, $MUL, isMul
 	beq $opNode, $ADD, isAdd
 	beq $opNode, $SUB, isSub
@@ -211,25 +222,26 @@ nextStep:
 		# write pow
 		
 	writeResult:
-		sll $v0, $index, 2
-		sw $opNode, vector($v0)
-		sll $v0, $left, 2
 		li $a0, $EMPTY
-		sw $a0, vector($left)
-		sll $v0, $right, 2
-		sw $a0,  vector($right)
+		writeVector ($index, $opNode)
+		writeVector ($left, $a0)
+		writeVector ($right, $a0)
 		
 	j returnDo
 	# end operation
 	
 	skipOperation:
 	
-	bgt $left, $n, tryRight
+	isLeaf ($left)
+	beq $v0, 1, tryRight
 	move $index, $left
 	jal nextStep
 	
+	lw $index, 4($sp)
+	
 	tryRight:
-		bgt $right, $n, returnDo
+		isLeaf ($right)
+		beq $v0, 1, returnDo
 		move $index, $right
 		jal nextStep
 	
