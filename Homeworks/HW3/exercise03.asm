@@ -2,11 +2,10 @@
 
 .data
 	.align 2
-	vector: .word 15,-1,-2,-3,3,-1,7,-3,-666,-666,5,8,-666,-666,6,9
+	vector: .word 0:1000
 	openBracket: .asciiz "("
 	closedBracket: .asciiz ")"
 	newLine: .asciiz "\n"
-	opChars: .byte '*','+','-','^'
 	mulChar: .asciiz "*"
 	addChar: .asciiz "+"
 	subChar: .asciiz "-"
@@ -95,25 +94,25 @@
 
 main:
 	# take number of integers
-	#takeInt ($n)
-	#writeVector ($0, $n)
-	#addiu $n, $n, 1
+	takeInt ($n)
+	writeVector ($0, $n)
+	addiu $n, $n, 1
 	
 	# save n integers
-	#addiu $t1, $0, 1					# counter
-	addiu $n, $0, 15
 	
+	li $t1, 1
 	askLoop:
-	
-	#beq $t1, $n, endAskLoop
-#		takeInt ($t2)
-#		writeVector ($t1, $t2)
-#		addiu $t1, $t1, 1
-#		j askLoop
-#	endAskLoop:
+		beq $t1, $n, endAskLoop
+		takeInt ($t2)
+		writeVector ($t1, $t2)
+		addiu $t1, $t1, 1
+		j askLoop
+	endAskLoop:
 
 	addi $index, $0, 1
 	jal printExpression
+	
+	beq $n, 2, end
 
 	resolveStepLoop:
 		lw $s0, vector+8
@@ -130,6 +129,13 @@ main:
 		j resolveStepLoop
 	
 	end:
+	la $a0, newLine
+	li $v0, 4
+	syscall
+	la $a0, newLine
+	li $v0, 4
+	syscall
+	
 	li $v0, 10
 	syscall
 
@@ -222,7 +228,14 @@ nextStep:
 		sub $opNode, $leftValue, $rightValue
 		j writeResult
 	isPow:
-		# write pow
+		li $v0, 1
+		mul $opNode, $leftValue, $v0
+		abs $rightValue, $rightValue
+		powLoop:
+			beq $v0, $rightValue, writeResult
+			mul $opNode, $opNode, $leftValue
+			addi $v0, $v0, 1
+			j powLoop
 		
 	writeResult:
 		li $a0, $EMPTY
