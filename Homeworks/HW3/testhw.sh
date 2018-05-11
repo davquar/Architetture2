@@ -1,6 +1,6 @@
 #!/bin/bash
 
-programFile="exercise03.asm"
+programFile="exercise01.asm"
 marsPath="../../MARS.jar"
 testsDir="tests"
 
